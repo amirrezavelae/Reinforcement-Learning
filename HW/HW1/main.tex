@@ -1,0 +1,297 @@
+\documentclass[12pt]{article}
+\usepackage{blindtext}
+\usepackage[en,bordered]{uni-style}
+\usepackage{uni-math}
+\usepackage{physics}
+\usepackage{amssymb}
+\title{Reinfocement Learning}
+\prof{Dr \,M.Rohban}
+\subject{Homework 1}
+\info{
+    \begin{tabular}{lr}
+        Amirreza Velae & 400102222\\
+        Webpage & \href{https://amirrezavelae.github.io/}{amirrezavelae.github.io}
+    \end{tabular}
+    }
+    \date{\today}
+    % \usepackage{xepersian}
+    % \settextfont{Yas}
+    \usepackage{uni-code}
+    
+\begin{document}
+\maketitlepage
+\maketitlestart
+
+
+
+\section{Optimization}
+\subsection{Convexity}
+Prove that for every convex function $f(x)$, every critical point is a global minimum.\\
+\begin{qsolve}[solution]
+    We know that a function $f(x)$ is convex if and only if for every $x_1, x_2 \in \mathbb{R}$ and $0 \leq \lambda \leq 1$:
+    \begin{align*}
+        f(\lambda x_1 + (1-\lambda)x_2) \leq \lambda f(x_1) + (1-\lambda)f(x_2)
+    \end{align*}
+    Or by first order condition:
+    \begin{align*}
+        f(x_2) \geq f(x_1) + f'(x_1)(x_2-x_1)
+    \end{align*}
+    Now let's assume that $x_1$ is a critical point of $f(x)$, then $f'(x_1) = 0$. Now let's assume that $x_2$ is any other point in the domain of $f(x)$, then we have:
+    \begin{align*}
+        f(x_2) & \geq f(x_1) + f'(x_1)(x_2-x_1) = f(x_1)
+    \end{align*}
+    So we can conclude that $x_1$ is a global minimum of $f(x)$.\\
+    If $f(x)$ is strictly convex, then $x_1$ is the only global minimum of $f(x)$.
+\end{qsolve}
+
+\subsection{Convex Optimization}
+Sove the following optimization problem:
+\begin{align*}
+    \min_{x} \quad    & f(x,y,z) = x^2 + y^2 + z^2 \\
+    \text{s.t.} \quad & z^2 = x^2 + y^2            \\
+                      & z = x + y + 1
+\end{align*}
+\begin{qsolve}[solution]
+    We can use Lagrange multipliers to solve this problem. We define the Lagrangian as:
+    \begin{align*}
+        L(x,y,z,\lambda) & = f(x,y,z) - \lambda_1(z^2 - x^2 - y^2) - \lambda_2(z - x - y - 1)        \\
+        L(x,y,z,\lambda) & = x^2 + y^2 + z^2 - \lambda_1(z^2 - x^2 - y^2) - \lambda_2(z - x - y - 1)
+    \end{align*}
+    \splitqsolve
+    Now we can find the critical points of $L(x,y,z,\lambda)$ by solving the following system of equations:
+    \begin{align*}
+        \pdv{L}{x}         & = 2x + 2\lambda_1x + \lambda_2 = 0 \\
+        \pdv{L}{y}         & = 2y + 2\lambda_1y + \lambda_2 = 0 \\
+        \pdv{L}{z}         & = 2z - 2\lambda_1z - \lambda_2 = 0 \\
+        \pdv{L}{\lambda_1} & = z^2 - x^2 - y^2 = 0              \\
+        \pdv{L}{\lambda_2} & = z - x - y - 1 = 0
+    \end{align*}
+    From first and second equations we have:
+    \begin{align*}
+         & 2(x + \lambda_1) + \lambda_2 = 0                      \\
+         & 2(y + \lambda_1) + \lambda_2 = 0                      \\
+         & \implies x + \lambda_1 = y + \lambda_1 \implies x = y
+    \end{align*}
+    Now we can reduce the system of equations to:
+    \begin{align*}
+        2x + 2\lambda_1x + \lambda_2 & = 0 \\
+        2z - 2\lambda_1z - \lambda_2 & = 0 \\
+        z^2 - 2x^2                   & = 0 \\
+        z - 2x - 1                   & = 0
+    \end{align*}
+    Now we can solve the system of equations to find the critical points:
+    \begin{align*}
+        z   & = 2x + 1 \rightarrow z^2 = 4x^2 + 4x + 1                                    \\
+        z^2 & = 2x^2 \rightarrow 4x^2 + 4x + 1 = 2x^2 \rightarrow 2x^2 + 4x + 1 = 0       \\
+        x   & = -1 + \frac{\sqrt{2}}{2} \quad \text{or} \quad x = -1 - \frac{\sqrt{2}}{2} \\
+        y   & = -1 + \frac{\sqrt{2}}{2} \quad \text{or} \quad y = -1 - \frac{\sqrt{2}}{2} \\
+        z   & = 2x + 1 \implies z = \sqrt{2} \quad \text{or} \quad z = -\sqrt{2}          \\
+    \end{align*}
+    So the critical points are:
+    \begin{align*}
+        (x,y,z) & = \left(-1 + \frac{\sqrt{2}}{2}, -1 + \frac{\sqrt{2}}{2}, \sqrt{2}\right)  \\
+        (x,y,z) & = \left(-1 - \frac{\sqrt{2}}{2}, -1 - \frac{\sqrt{2}}{2}, -\sqrt{2}\right)
+    \end{align*}
+    \splitqsolve
+    Now we can find the value of $f(x,y,z)$ at these points:
+    \begin{align*}
+        f\left(-1 + \frac{\sqrt{2}}{2}, -1 + \frac{\sqrt{2}}{2}, \sqrt{2}\right)  & = 2 \\
+        f\left(-1 - \frac{\sqrt{2}}{2}, -1 - \frac{\sqrt{2}}{2}, -\sqrt{2}\right) & = 2
+    \end{align*}
+    So the minimum value of $f(x,y,z)$ is 2 and it is achieved at the critical points.
+\end{qsolve}
+\subsection{Duality}
+We define the dual problem of a convex optimization problem as:
+\begin{align*}
+     & \max_{\lambda, \mu} \quad  L(\lambda, \mu) = \min_{x} \left\{ f(x) + \lambda^T g(x) + \mu^T h(x) \right\} \\
+     & L(\lambda, \mu)      = \min_{x} \left\{ f(x) + \lambda^T g(x) + \mu^T h(x) \right\}
+\end{align*}
+Prove that :
+\begin{align*}
+    L(\lambda, \mu) \leq min_{x} f(x) \quad \forall \lambda, \mu
+\end{align*}
+and give an example of a convex optimization problem for which the equality does not hold for any $\lambda, \mu$.\\
+\begin{qsolve}[solution]
+    We know that $f(x)$ is a convex function and $g(x)$ and $h(x)$ are affine functions. So the function $L(\lambda, \mu)$ is a concave function.\\
+    Now let's assume that $x^*$ is the optimal solution of the primal problem, then we have:
+    \begin{align*}
+        f(x^*) + \lambda^T g(x^*) + \mu^T h(x^*) \geq f(x) + \lambda^T g(x) + \mu^T h(x) \quad \forall x
+    \end{align*}
+    So we can conclude that:
+    \begin{align*}
+        f(x^*) + \lambda^T g(x^*) + \mu^T h(x^*) \geq \min_{x} \left\{ f(x) + \lambda^T g(x) + \mu^T h(x) \right\}
+    \end{align*}
+    So we can conclude that:
+    \begin{align*}
+        L(\lambda, \mu) \leq \min_{x} f(x)
+    \end{align*}
+    Now let's consider the following optimization problem:
+    \begin{align*}
+        \min_{x} \quad    & f(x) = x^2 \\
+        \text{s.t.} \quad & x \geq 1
+    \end{align*}
+    The optimal solution of this problem is $x^* = 1$ and $f(x^*) = 1$. Now let's consider the dual problem:
+    \begin{align*}
+        \max_{\lambda} \quad & L(\lambda) = \min_{x} \left\{ x^2 + \lambda(x-1) \right\}
+    \end{align*}
+    \splitqsolve
+    The optimal solution of this problem is $\lambda^* = 0$ and $L(\lambda^*) = 0$. So we can conclude that:
+    \begin{align*}
+        L(\lambda^*) = 0 < f(x^*) = 1
+    \end{align*}
+    So the equality does not hold for any $\lambda, \mu$.\\
+    The reason that the equality does not hold is that the constraint is not convex.
+\end{qsolve}
+
+\subsection{Water Filling}
+Solve the following optimization problem:
+\begin{align*}
+    \max_{p} \quad    & {-\sum_{i=1}^{n} \log(\alpha_i + x_i)} \\
+    \text{s.t.} \quad & x \geq 0 \quad \sum_{i=1}^{n} x_i = 1
+\end{align*}
+\begin{qsolve}[solution]
+    We can use Lagrange multipliers to solve this problem. We define the Lagrangian as:
+    \begin{align*}
+        L(x, \lambda) & = -\sum_{i=1}^{n} \log(\alpha_i + x_i) - \lambda \left( \sum_{i=1}^{n} x_i - 1 \right)
+    \end{align*}
+    Now we can find the critical points of $L(x, \lambda)$ by solving the following system of equations:
+    \begin{align*}
+        \pdv{L}{x_i}     & = -\frac{1}{\alpha_i + x_i} - \lambda = 0 \quad \forall i \in \{1,2,\ldots,n\} \\
+        \pdv{L}{\lambda} & = \sum_{i=1}^{n} x_i - 1 = 0
+    \end{align*}
+    From the first equation we have:
+    \begin{align*}
+        -\frac{1}{\alpha_i + x_i} - \lambda = 0 \rightarrow x_i = -\alpha_i - \frac{1}{\lambda}
+    \end{align*}
+    Now we can use the second equation to find the value of $\lambda$:
+    \begin{align*}
+        \sum_{i=1}^{n} x_i = 1 \rightarrow \sum_{i=1}^{n} -\alpha_i - \frac{1}{\lambda} = 1 \rightarrow -\frac{1}{\lambda} = 1 - \sum_{i=1}^{n} \alpha_i \rightarrow \lambda = -\frac{1}{1 - \sum_{i=1}^{n} \alpha_i}
+    \end{align*}
+    Now we can use the value of $\lambda$ to find the value of $x_i$:
+    \begin{align*}
+        x_i = -\alpha_i - \frac{1}{\lambda} = -\alpha_i - \frac{1}{-\frac{1}{1 - \sum_{i=1}^{n} \alpha_i}} = -\alpha_i + 1 - \sum_{i=1}^{n} \alpha_i = 1 - \alpha_i
+    \end{align*}
+    So the optimal solution of the problem is:
+    \begin{align*}
+        x_i = 1 - \alpha_i \quad \lambda = -\frac{1}{1 - \sum_{i=1}^{n} \alpha_i}
+    \end{align*}
+\end{qsolve}
+
+
+
+\subsection{Maximum Entropy}
+Solve the following optimization problem:
+\begin{align*}
+    \max_{p} \quad    & { - \int p(x) \log p(x) \dd{x} }                                 \\
+    \text{s.t.} \quad & \mathbb{E}_p [ X ]   = \mu \quad \mathbb{V}_p [ X^2 ] = \sigma^2
+\end{align*}
+
+\begin{qsolve}[solution]
+    Here $p(x)$ is the probability mass function of a random variable $X$. We know that probability mass function is a non-negative function and $\sum_{x} p(x) = 1$; i.e:
+    \begin{align*}
+        p(x) \geq 0 \quad \text{and} \quad \int p(x) \dd{x} = 1
+    \end{align*}
+    We can use variational calculus to solve this problem. We define the $L(p, \lambda)$ as:
+    \begin{align*}
+        L(p, \lambda) & = - \int p(x) \log p(x) \dd{x} - \lambda \left( \int p(x) \dd{x} - 1 \right)
+    \end{align*}
+    Now, using the variational calculus given in the homework, we know that the critical points of $\int F(x, y ,y') \dd{x}$ are the solutions of the following system of equations:
+    \begin{align*}
+        \frac{d}{dx} \pdv{F}{y'} - \pdv{F}{y} & = 0
+    \end{align*}
+    Now we can find the critical points of $L(p, \lambda)$ by solving the following system of equations:
+    \begin{align*}
+         & \frac{d}{dx} \pdv{L}{p'} - \pdv{L}{p}        = 0 \\
+         & \implies \frac{d}{dx} \times 0 - \pdv{L}{p}  = 0
+    \end{align*}
+    Now we can solve $\pdv{L}{p} = 0$ to find the critical points of $L(p, \lambda)$:
+    \begin{align*}
+         & \pdv{L}{p}     = - \log p(x) - 1 - \lambda = 0 \\
+         & \implies p(x)  = e^{-1-\lambda}
+    \end{align*}
+    Now we can use the constraints to find the value of $\lambda$:
+    \begin{align*}
+         & \int p(x) \dd{x}  = 1 \rightarrow \int e^{-1-\lambda} \dd{x} =e^{-1-\lambda} \times (b-a) = 1 \\
+         & \implies e^{-1-\lambda}    = \frac{1}{b-a} \rightarrow \lambda =  \log(b-a) -1                \\
+         & \implies p(x)  = \frac{1}{b-a}
+    \end{align*}
+    \splitqsolve
+    So the probability mass function that maximizes the entropy is a uniform distribution. To find the value of $\mu$ and $\sigma^2$ we can use the following equations:
+    \begin{align*}
+         & \mathbb{E}_p [ X ]   = \int x p(x) \dd{x} = \frac{1}{b-a} \int_{a}^{b} x \dd{x} = \frac{1}{b-a} \frac{b^2 - a^2}{2} = \frac{b+a}{2} = \mu                  \\
+         & \mathbb{V}_p [ X ] = \int x^2 p(x) \dd{x} - \mu^2 = \frac{1}{b-a} \int_{a}^{b} x^2 \dd{x} - \mu^2                                                          \\
+         & \quad \quad \quad        = \frac{1}{b-a} \frac{b^3 - a^3}{3} - \mu^2 = \frac{b^2 + ab + a^2}{3} - \frac{(b+a)^2}{4} = \frac{a^2 - ab + b^2}{12} = \sigma^2
+    \end{align*}
+    So the optimal solution of the problem is:
+    \begin{align*}
+        p(x) = \frac{1}{b-a} \quad \mu = \frac{b+a}{2} \quad \sigma^2 = \frac{a^2 - ab + b^2}{12}
+    \end{align*}
+    Or:
+    \begin{align*}
+        \begin{cases}
+            \mu    = \frac{b+a}{2} \\
+            \sigma = \frac{\lvert b-a \rvert}{\sqrt{12}} = \frac{b-a}{2\sqrt{3}}
+        \end{cases}
+        \implies
+        \begin{cases}
+            a = \mu - \sqrt{3}\sigma \\
+            b = \mu + \sqrt{3}\sigma
+        \end{cases}
+        \implies
+        p \sim U(\mu - \sqrt{3}\sigma, \mu + \sqrt{3}\sigma)
+    \end{align*}
+    Note: If there was any limit on the domain of $x$; i.e. $\text{ dom}(x) = R $, then the optimal solution would be a gaussian distribution(\href{https://en.wikipedia.org/w/index.php?title=Maximum_entropy_probability_distribution&action=edit&section=11}{Wikipedia}).\\
+    As a short proof, we can use the following Lagrangian:
+    \begin{align*}
+        L(p, \lambda, \mu, \sigma) & = - \int p(x) \log p(x) \dd{x} - \lambda_0 \left( \int p(x) \dd{x} - 1 \right) -\lambda_1 \left( \int (x-\mu)^2 p(x) \dd{x} - \sigma^2 \right) \\
+                                   & = - \int p(x) \large( \log p(x) - \lambda_0 - \lambda_1 (x-\mu)^2 \large) \dd{x} + \lambda_0 + \lambda_1 \sigma^2
+    \end{align*}
+    Using calculus of variations, we can find the critical points of $L(p, \lambda, \mu, \sigma)$ by solving the following system of equations:
+    \begin{align*}
+         & \frac{d}{dx} \pdv{L}{p'} - \pdv{L}{p}        = 0                   \\
+         & \frac{d}{dx} \times 0 - \pdv{L}{p}            = 0                  \\
+         & \pdv{L}{p} = - \log p(x) - 1 - \lambda_0 - \lambda_1 (x-\mu)^2 = 0 \\
+         & \implies p(x) = e^{-1-\lambda_0-\lambda_1(x-\mu)^2}
+    \end{align*}
+    Now, using the constraints, we can find the value of $\lambda_0$ and $\lambda_1$:
+    \begin{align*}
+         & \int p(x) \dd{x}  = 1 \rightarrow \int e^{-1-\lambda_0-\lambda_1(x-\mu)^2} \dd{x} = 1 \\
+         & \implies e^{-1-\lambda_0} \int e^{-\lambda_1(x-\mu)^2} \dd{x} = 1
+    \end{align*}
+    \splitqsolve
+    We can use the following substitution to solve the integral:
+    \begin{align*}
+        t = \sqrt{\lambda_1}(x-\mu) \rightarrow \dd{t} = \sqrt{\lambda_1} \dd{x}
+    \end{align*}
+    So we can conclude that:
+    \begin{align*}
+        \int e^{-\lambda_1(x-\mu)^2} \dd{x} = \frac{1}{\sqrt{\lambda_1}} \int e^{-t^2} \dd{t} = \frac{\sqrt{\pi}}{\sqrt{\lambda_1}}
+    \end{align*}
+    So we can conclude that:
+    \begin{align*}
+        e^{-1-\lambda_0} \frac{\sqrt{\pi}}{\sqrt{\lambda_1}} = 1 \rightarrow e^{-1-\lambda_0} = \frac{\sqrt{\lambda_1}}{\sqrt{\pi}} \rightarrow \lambda_0 = -1 - \log(\sqrt{\pi}) - \frac{1}{2}\log(\lambda_1)
+    \end{align*}
+    Now we can use the second constraint to find the value of $\lambda_1$:
+    \begin{align*}
+         & \int (x-\mu)^2 p(x) \dd{x} = \sigma^2 \rightarrow \int (x-\mu)^2 e^{-1-\lambda_0-\lambda_1(x-\mu)^2} \dd{x} = \sigma^2
+    \end{align*}
+    We can use the same substitution to solve the integral:
+    \begin{align*}
+        \frac{1}{\sqrt{\lambda_1}} \int \frac{t^2}{\lambda_1} e^{-1-\lambda_0-t^2} \dd{t} = \frac{e^{-1-\lambda_0}}{\lambda_1 \sqrt{\lambda_1}} \int t^2 e^{-t^2} \dd{t} = \frac{\frac{\sqrt{\lambda_1}}{\sqrt{\pi}}}{\lambda_1 \sqrt{\lambda_1}} \int t^2 e^{-t^2} \dd{t} = \frac{1}{\lambda_1 \sqrt{\pi}} \frac{\sqrt{\pi}}{2} = \sigma^2 \\
+        \rightarrow \frac{1}{2\lambda_1} = \sigma^2 \rightarrow \lambda_1 = \frac{1}{2\sigma^2}
+    \end{align*}
+    So the optimal solution of the problem is:
+    \begin{align*}
+        p(x) = e^{-1-\lambda_0-\lambda_1(x-\mu)^2} \quad \lambda_0 = -1 - \log(\sqrt{\pi}) - \frac{1}{2}\log(\lambda_1) \quad \lambda_1 = \frac{1}{2\sigma^2}
+    \end{align*}
+    Or:
+    \begin{align*}
+        p(x) = e^{-1+\log(\sqrt{\pi}) + \frac{1}{2}\log(2\sigma^2) - \frac{1}{2\sigma^2}(x-\mu)^2} = \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+    \end{align*}
+    So the optimal solution of the problem is a gaussian distribution.
+\end{qsolve}
+
+
+
+\makeendpage
+\end{document}
